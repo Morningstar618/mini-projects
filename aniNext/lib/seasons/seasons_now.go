@@ -23,7 +23,7 @@ type Anime struct {
 
 const url = "https://api.jikan.moe/v4/seasons/now"
 
-func GetSeasonsNow() {
+func GetSeasonsNow() []string {
 	green := printer.PrintGreen()
 	red := printer.PrintRed()
 	cyan := printer.PrintCyan()
@@ -53,11 +53,14 @@ func GetSeasonsNow() {
 		fmt.Printf("%s\n", red("[!] Failed to deserialize response from the API /seasons/now"))
 	}
 
+	var aniList []string
+
 	fmt.Println("\n--- Airing Anime This Season (Score > 7.0) ---")
 
 	foundCount := 0
 	for _, anime := range jikanRes.Data {
 		if anime.Score > 7 {
+			aniList = append(aniList, anime.Title)
 			foundCount++
 			goodAnime := fmt.Sprintf("#%d: %s (Score: %.2f)", foundCount, anime.Title, anime.Score)
 			fmt.Printf("%s\n", cyan(goodAnime))
@@ -66,6 +69,8 @@ func GetSeasonsNow() {
 
 	if foundCount == 0 {
 		fmt.Println("No good anime currently being aired with score > 7.0")
+		return nil
 	}
 
+	return aniList
 }
